@@ -1,96 +1,42 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raspadinha Fornalle</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
-        :root { --laranja: #ff9f5e; --verde: #a3c5a5; --bege: #fbd38d; }
-        body { font-family: 'Oswald', sans-serif; margin: 0; text-transform: uppercase; background-color: var(--laranja); }
-
-        /* --- LOGO OFICIAL --- */
-        .logo { font-size: 3.5rem; color: white; text-align: center; margin-bottom: 25px; line-height: 0.8; }
-        .logo span { 
-            font-size: 1.1rem; display: block; margin-top: 12px; 
-            color: #ff0000; -webkit-text-stroke: 0.5px black; letter-spacing: 5px;
-        }
-
-        /* --- TELAS --- */
-        #tela-cadastro, #tela-cliente, #painel-admin { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .form-container { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 380px; color: #333; text-transform: none; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        
-        /* --- ADMIN --- */
-        .grid-premios { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .btn-admin { background: white; border: 1px solid #333; padding: 10px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; }
-        .caixa-link { background: white; padding: 15px; border-radius: 10px; word-break: break-all; width: 100%; text-align: center; min-height: 20px; border: 2px dashed #666; text-transform: none; }
-
-        /* --- RASPADINHA --- */
-        .scratch-container { position: relative; width: 300px; height: 300px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; }
-        #premio-texto { color: #333; font-size: 1.8rem; text-align: center; padding: 15px; font-weight: bold; }
-        canvas { position: absolute; top: 0; left: 0; border-radius: 15px; cursor: crosshair; touch-action: none; }
-        
-        /* --- POPUP REGULAMENTO --- */
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
-        .modal-content { background: white; color: #333; padding: 20px; border-radius: 15px; width: 90%; max-width: 450px; text-transform: none; font-family: Arial; }
-        
-        .btn-enviar { width: 100%; background: var(--laranja); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-family: 'Oswald'; font-size: 1.2rem; }
-        .btn-reg { background-color: var(--bege); color: black; border: none; padding: 15px 30px; border-radius: 15px; margin-top: 20px; cursor: pointer; font-family: 'Oswald'; }
-    </style>
-</head>
-<body>
-
-    <div id="painel-admin">
-        <h2 style="color:white">GERADOR DE LINKS FORNALLE</h2>
-        <div class="grid-premios">
-            <button class="btn-admin" onclick="prepararLink('Vale uma pizza de R$32,00')">Pizza R$32</button>
-            <button class="btn-admin" onclick="prepararLink('Borda Recheada Grátis')">Borda Grátis</button>
-            <button class="btn-admin" onclick="prepararLink('Pastel de R$12,00 Grátis')">Pastel R$12</button>
-            <button class="btn-admin" onclick="prepararLink('Panzerotti de R$12,00 Grátis')">Panzerotti R$12</button>
-            <button class="btn-admin" onclick="prepararLink('Refri 200ml Grátis')">Refri 200ml</button>
-            <button class="btn-admin" onclick="prepararLink('10% de Desconto')">10% OFF</button>
-            <button class="btn-admin" onclick="prepararLink('Entrega Grátis')">Entrega Grátis</button>
-        </div>
-        <div id="caixa-link" class="caixa-link">Selecione um prêmio acima</div>
-        <button onclick="copiarLink()" style="margin-top:15px; padding:15px; background:#333; color:white; border:none; border-radius:30px; cursor:pointer; width:100%; font-family:'Oswald';">COPIAR LINK</button>
-    </div>
-
-    <div id="tela-cadastro">
-        <div class="logo">FORNALLE<span>PIZZA DELIVERY</span></div>
-        <div class="form-container">
-            <h2 style="text-align:center; color:var(--laranja); margin-top:0;">CADASTRO</h2>
-            <input type="text" id="nome" placeholder="Nome Completo">
-            <input type="text" id="cpf" placeholder="CPF">
-            <input type="tel" id="whats" placeholder="WhatsApp">
-            <button class="btn-enviar" onclick="finalizarCadastro()">LIBERAR RASPADINHA</button>
-        </div>
-    </div>
-
-    <div id="tela-cliente">
-        <div class="logo">FORNALLE<span>PIZZA DELIVERY</span></div>
-        <div class="scratch-container">
-            <div id="premio-texto">Carregando...</div>
-            <canvas id="scratchCanvas" width="300" height="300"></canvas>
-        </div>
-        <button class="btn-reg" onclick="abrirModal()">Ver Regulamento</button>
-    </div>
-
-    <div id="meuModal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top:0">REGRAS DA PROMOÇÃO</h3>
-            <p>• Válido para o seu <b>próximo pedido</b>.</p>
-            <p>• Pedido mínimo de <b>R$ 29,90</b>.</p>
-            <p>• Válido por <b>15 dias corridos</b>.</p>
-            <p>• Limite de 1 por CPF.</p>
-            <button class="btn-enviar" onclick="fecharModal()">ENTENDI</button>
-        </div>
-    </div>
-
-    <script>
+<script>
+        // CONFIGURAÇÕES
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxFa3Ym6ByJVldODGr6bqLdS5Iuj1UoF1HzymktJgRZFjOO6NqnT9uivM1RrhXBwSk/exec';
+        const SENHA_MESTRA = "fornalle2025"; // MUDE SUA SENHA AQUI!
         let premioAtual = "";
 
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const p = urlParams.get('p');
+
+            if (p) {
+                // MODO CLIENTE (Link com prêmio)
+                document.getElementById('painel-admin').style.display = 'none';
+                document.getElementById('tela-cadastro').style.display = 'flex';
+                try {
+                    premioAtual = decodeURIComponent(escape(atob(p)));
+                } catch(e) {
+                    alert("Link inválido!");
+                }
+            } else {
+                // MODO ADMIN (Link puro)
+                verificarLogin();
+            }
+        };
+
+        function verificarLogin() {
+            const senhaDigitada = prompt("ACESSO RESTRITO: Digite a senha da Fornalle:");
+            
+            if (senhaDigitada === SENHA_MESTRA) {
+                document.getElementById('painel-admin').style.display = 'flex';
+                alert("Acesso autorizado!");
+            } else {
+                alert("Senha incorreta!");
+                window.location.href = "https://www.google.com"; // Expulsa o intruso
+            }
+        }
+
+        // ... Mantenha as outras funções (prepararLink, finalizarCadastro, etc) como estavam ...
+        
         function prepararLink(premio) {
             const urlBase = window.location.href.split('?')[0];
             const codigo = btoa(unescape(encodeURIComponent(premio)));
@@ -103,17 +49,6 @@
             navigator.clipboard.writeText(texto);
             alert("Link copiado!");
         }
-
-        window.onload = () => {
-            const p = new URLSearchParams(window.location.search).get('p');
-            if (p) {
-                document.getElementById('painel-admin').style.display = 'none';
-                document.getElementById('tela-cadastro').style.display = 'flex';
-                premioAtual = decodeURIComponent(escape(atob(p)));
-            } else {
-                document.getElementById('painel-admin').style.display = 'flex';
-            }
-        };
 
         function abrirModal() { document.getElementById('meuModal').style.display = 'flex'; }
         function fecharModal() { document.getElementById('meuModal').style.display = 'none'; }
@@ -154,5 +89,3 @@
             canvas.ontouchstart = (e) => { isDrawing = true; e.preventDefault(); }; canvas.ontouchend = () => isDrawing = false; canvas.ontouchmove = draw;
         }
     </script>
-</body>
-</html>
