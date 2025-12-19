@@ -3,146 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raspadinha Fornalle</title>
+    <title>Raspadinha Fornalle - Pizza Delivery</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
-        :root { --laranja: #ff9f5e; --verde: #a3c5a5; --bege: #fbd38d; }
-        body { font-family: 'Oswald', sans-serif; margin: 0; text-transform: uppercase; background-color: var(--laranja); }
-        .logo { font-size: 3.5rem; color: white; text-align: center; margin-bottom: 25px; line-height: 0.8; }
-        .logo span { font-size: 1.1rem; display: block; margin-top: 12px; color: #ff0000; -webkit-text-stroke: 0.5px black; letter-spacing: 5px; }
-        #tela-cadastro, #tela-cliente, #painel-admin { display: none; min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .form-container { background: white; padding: 25px; border-radius: 15px; width: 100%; max-width: 380px; color: #333; text-transform: none; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .grid-premios { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .btn-admin { background: white; border: 1px solid #333; padding: 10px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; }
-        .caixa-link { background: white; padding: 15px; border-radius: 10px; word-break: break-all; width: 100%; text-align: center; min-height: 20px; border: 2px dashed #666; text-transform: none; }
-        .scratch-container { position: relative; width: 300px; height: 300px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; }
-        #premio-texto { color: #333; font-size: 1.8rem; text-align: center; padding: 15px; font-weight: bold; }
-        canvas { position: absolute; top: 0; left: 0; border-radius: 15px; cursor: crosshair; touch-action: none; }
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
-        .modal-content { background: white; color: #333; padding: 20px; border-radius: 15px; width: 90%; max-width: 450px; text-transform: none; font-family: Arial; }
-        .btn-enviar { width: 100%; background: var(--laranja); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-family: 'Oswald'; font-size: 1.2rem; }
-        .btn-reg { background-color: var(--bege); color: black; border: none; padding: 15px 30px; border-radius: 15px; margin-top: 20px; cursor: pointer; font-family: 'Oswald'; }
+        
+        :root { 
+            --laranja: #ff9f5e; 
+            --bege: #fbd38d; 
+            --vinho: #800000; 
+            --cinza: #333;
+        }
+
+        body { 
+            font-family: 'Oswald', sans-serif; 
+            margin: 0; 
+            text-transform: uppercase; 
+            background-color: var(--laranja); 
+            overflow-x: hidden; 
+        }
+        
+        /* LOGO */
+        .logo { font-size: 3rem; color: white; text-align: center; margin-bottom: 20px; line-height: 0.8; padding-top: 20px; }
+        .logo span { font-size: 1rem; display: block; margin-top: 10px; color: #ff0000; -webkit-text-stroke: 0.5px black; letter-spacing: 3px; }
+
+        /* CONTAINERS DE TELAS */
+        #tela-cadastro, #tela-cliente, #painel-admin { 
+            display: none; 
+            min-height: 100vh; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+            box-sizing: border-box; 
+        }
+        
+        /* FORMULÁRIO */
+        .form-container { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 15px; 
+            width: 100%; 
+            max-width: 350px; 
+            color: var(--cinza); 
+            text-transform: none; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+        }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+        }
+        
+        /* PAINEL ADMIN */
+        .grid-premios { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; width: 100%; max-width: 400px; }
+        .btn-admin { background: white; border: 2px solid var(--cinza); padding: 10px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; font-size: 0.8rem; border-radius: 8px; }
+        .caixa-link { background: #eee; padding: 10px; border-radius: 8px; word-break: break-all; width: 100%; max-width: 400px; text-align: center; font-size: 0.8rem; border: 1px dashed var(--cinza); text-transform: none; margin-bottom: 10px; color: var(--cinza); }
+        
+        /* RASPADINHA */
+        .scratch-container { 
+            position: relative; 
+            width: 280px; 
+            height: 280px; 
+            background: white; 
+            border-radius: 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border: 5px solid white; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+        }
+        #premio-texto { color: var(--cinza); font-size: 1.5rem; text-align: center; padding: 10px; font-weight: bold; width: 100%; line-height: 1.2; }
+        canvas { position: absolute; top: 0; left: 0; border-radius: 10px; cursor: crosshair; touch-action: none; }
+        
+        /* BOTÕES */
+        .btn-enviar { width: 100%; background: var(--cinza); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-family: 'Oswald'; font-size: 1.2rem; margin-top: 10px; }
+        .btn-reg { background-color: var(--vinho); color: white; border: none; padding: 12px 25px; border-radius: 30px; margin-top: 20px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; border: 2px solid white; }
+
+        /* MODAL REGULAMENTO */
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
+        .modal-content { background: white; color: var(--cinza); padding: 25px; border-radius: 15px; width: 85%; max-width: 400px; text-transform: none; font-family: Arial, sans-serif; }
+        .modal-content h3 { color: var(--vinho); border-bottom: 2px solid var(--laranja); padding-bottom: 5px; margin-top: 0; }
+        .regra-item { margin-bottom: 12px; font-size: 0.9rem; line-height: 1.4; display: flex; align-items: flex-start; }
+        .regra-item b { color: var(--vinho); margin-right: 5px; }
     </style>
 </head>
 <body>
 
     <div id="painel-admin">
-        <h2 style="color:white">GERADOR DE LINKS FORNALLE</h2>
+        <h2 style="color:white; margin-bottom:10px;">GERADOR FORNALLE</h2>
         <div class="grid-premios">
-            <button class="btn-admin" onclick="prepararLink('Vale uma pizza de R$32,00')">Pizza R$32</button>
-            <button class="btn-admin" onclick="prepararLink('Borda Recheada Grátis')">Borda Grátis</button>
-            <button class="btn-admin" onclick="prepararLink('Pastel de R$12,00 Grátis')">Pastel R$12</button>
-            <button class="btn-admin" onclick="prepararLink('Panzerotti de R$12,00 Grátis')">Panzerotti R$12</button>
-            <button class="btn-admin" onclick="prepararLink('Refri 200ml Grátis')">Refri 200ml</button>
-            <button class="btn-admin" onclick="prepararLink('10% de Desconto')">10% OFF</button>
-            <button class="btn-admin" onclick="prepararLink('Entrega Grátis')">Entrega Grátis</button>
+            <button class="btn-admin" onclick="gerarLink(1)">Pizza R$32</button>
+            <button class="btn-admin" onclick="gerarLink(2)">Borda Grátis</button>
+            <button class="btn-admin" onclick="gerarLink(3)">Pastel R$12</button>
+            <button class="btn-admin" onclick="gerarLink(4)">Panzerotti R$12</button>
+            <button class="btn-admin" onclick="gerarLink(5)">Refri 200ml</button>
+            <button class="btn-admin" onclick="gerarLink(6)">10% OFF</button>
+            <button class="btn-admin" onclick="gerarLink(7)">Entrega Grátis</button>
+            <button class="btn-admin" onclick="gerarLink(0)" style="background:#ffcccc;">Sem Prêmio</button>
         </div>
-        <div id="caixa-link" class="caixa-link">Selecione um prêmio acima</div>
-        <button onclick="copiarLink()" style="margin-top:15px; padding:15px; background:#333; color:white; border:none; border-radius:30px; cursor:pointer; width:100%; font-family:'Oswald';">COPIAR LINK</button>
+        <div id="caixa-link" class="caixa-link">Escolha um prêmio acima</div>
+        <button onclick="copiarLink()" style="padding:15px; background:white; color:#333; border:none; border-radius:30px; cursor:pointer; width:100%; font-family:'Oswald'; font-weight:bold;">COPIAR LINK</button>
     </div>
 
     <div id="tela-cadastro">
         <div class="logo">FORNALLE<span>PIZZA DELIVERY</span></div>
         <div class="form-container">
-            <h2 style="text-align:center; color:var(--laranja); margin-top:0;">CADASTRO</h2>
-            <input type="text" id="nome" placeholder="Nome Completo">
-            <input type="text" id="cpf" placeholder="CPF">
-            <input type="tel" id="whats" placeholder="WhatsApp">
-            <button class="btn-enviar" onclick="finalizarCadastro()">LIBERAR RASPADINHA</button>
+            <h2 id="titulo-cadastro" style="text-align:center; color:var(--laranja); margin:0 0 15px 0;">VALIDAR ACESSO</h2>
+            <input type="tel" id="cpf" placeholder="SEU CPF (Apenas números)">
+            <div id="campos-extras" style="display:none;">
+                <input type="text" id="nome" placeholder="NOME COMPLETO">
+                <input type="tel" id="whats" placeholder="WHATSAPP COM DDD">
+            </div>
+            <button id="btn-acao" class="btn-enviar" onclick="fluxo()">CONTINUAR</button>
         </div>
     </div>
 
     <div id="tela-cliente">
         <div class="logo">FORNALLE<span>PIZZA DELIVERY</span></div>
         <div class="scratch-container">
-            <div id="premio-texto">Carregando...</div>
-            <canvas id="scratchCanvas" width="300" height="300"></canvas>
+            <div id="premio-texto">Sorteando...</div>
+            <canvas id="scratchCanvas" width="280" height="280"></canvas>
         </div>
-        <button class="btn-reg" onclick="abrirModal()">Ver Regulamento</button>
+        <button class="btn-reg" onclick="document.getElementById('meuModal').style.display='flex'">VER REGULAMENTO</button>
     </div>
 
     <div id="meuModal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-top:0">REGRAS DA PROMOÇÃO</h3>
-            <p>• Válido para o seu <b>próximo pedido</b>.</p>
-            <p>• Pedido mínimo de <b>R$ 29,90</b>.</p>
-            <p>• Válido por <b>15 dias corridos</b>.</p>
-            <button class="btn-enviar" onclick="fecharModal()">ENTENDI</button>
+    <div class="modal-content">
+        <h3 style="color:var(--vinho); border-bottom: 2px solid var(--laranja); padding-bottom: 10px; margin-bottom: 15px; text-align: center;">📝 REGRAS DE RESGATE</h3>
+        
+        <div style="max-height: 350px; overflow-y: auto; text-transform: none; font-family: sans-serif; font-size: 0.95rem;">
+            
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <b style="color: var(--vinho);">📅 VALIDADE:</b><br>
+                Seu prêmio expira em 7 dias corridos após a raspagem.
+            </div>
+
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <b style="color: var(--vinho);">💰 PEDIDO MÍNIMO:</b><br>
+                Válido para pedidos acima de R$ 29,90 (exceto taxa de entrega).
+            </div>
+
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <b style="color: var(--vinho);">🚫 NÃO CUMULATIVO:</b><br>
+                Não pode ser usado junto com outros cupons ou pizzas em promoção.
+            </div>
+
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <b style="color: var(--vinho);">👤 USO PESSOAL:</b><br>
+                O prêmio está vinculado ao seu CPF e não pode ser transferido.
+            </div>
+
+            <div style="padding: 10px 0;">
+                <b style="color: var(--vinho);">📲 COMO USAR:</b><br>
+                Informe seu prêmio e CPF ao atendente pelo WhatsApp.
+            </div>
+
+            <p style="font-size: 0.75rem; color: #888; margin-top: 15px; font-style: italic;">
+                *A Fornalle Pizza reserva-se o direito de encerrar a campanha a qualquer momento.
+            </p>
         </div>
+
+        <button class="btn-enviar" onclick="this.parentElement.parentElement.style.display='none'">ENTENDI E CONCORDO</button>
     </div>
+</div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxFa3Ym6ByJVldODGr6bqLdS5Iuj1UoF1HzymktJgRZFjOO6NqnT9uivM1RrhXBwSk/exec';
+        // CONFIGURAÇÃO INICIAL
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzuPYs7TJX6UaMpBhgoylRn1DC_2nsThPOA0SDRrHulDCNIrYqk9_noEQV8gXApTUnK/exec';
         const SENHA_MESTRA = "paodoce1530";
-        let premioAtual = "";
+        let premioGlobal = "";
+        let novoUser = false;
+
+        // TABELA DE PRÊMIOS (Protege contra erros de URL e esconde do cliente)
+        const tabelaPremios = {
+            1: "Vale uma pizza de R$32,00",
+            2: "Borda Recheada Grátis",
+            3: "Pastel de R$12,00 Grátis",
+            4: "Panzerotti de R$12,00 Grátis",
+            5: "Refri 200ml Grátis",
+            6: "10% de Desconto",
+            7: "Entrega Grátis",
+            0: "NÃO FOI DESTA VEZ! 🍕"
+        };
 
         window.onload = () => {
-            const p = new URLSearchParams(window.location.search).get('p');
-            if (p) {
+            const params = new URLSearchParams(window.location.search);
+            const p = params.get('p');
+            if (p !== null && tabelaPremios[p] !== undefined) {
                 document.getElementById('tela-cadastro').style.display = 'flex';
-                try { premioAtual = decodeURIComponent(escape(atob(p))); } catch(e) { alert("Link inválido"); }
+                premioGlobal = tabelaPremios[p];
             } else {
-                verificarLogin();
+                let s = prompt("Senha Admin:");
+                if (s === SENHA_MESTRA) document.getElementById('painel-admin').style.display = 'flex';
+                else window.location.reload();
             }
         };
 
-        function verificarLogin() {
-            const senha = prompt("Senha:");
-            if (senha === SENHA_MESTRA) {
-                document.getElementById('painel-admin').style.display = 'flex';
+        // LÓGICA DE CADASTRO E VERIFICAÇÃO
+        function fluxo() {
+            const cpf = document.getElementById('cpf').value;
+            if(!cpf || cpf.length < 11) return alert("Por favor, digite um CPF válido.");
+            
+            if(!novoUser) {
+                document.getElementById('btn-acao').innerText = "VERIFICANDO...";
+                fetch(`${scriptURL}?acao=verificar&cpf=${cpf}`)
+                .then(r => r.text())
+                .then(res => {
+                    if(res === "existe") { entrar(); }
+                    else {
+                        novoUser = true;
+                        document.getElementById('campos-extras').style.display = 'block';
+                        document.getElementById('btn-acao').innerText = "CADASTRAR E RASPAR";
+                    }
+                });
             } else {
-                alert("Errada!");
-                window.location.reload();
+                const n = document.getElementById('nome').value;
+                const w = document.getElementById('whats').value;
+                if(!n || !w) return alert("Preencha seu Nome e WhatsApp!");
+                document.getElementById('btn-acao').innerText = "SALVANDO...";
+                fetch(`${scriptURL}?nome=${encodeURIComponent(n)}&cpf=${cpf}&whatsapp=${w}&premio=${encodeURIComponent(premioGlobal)}`,{mode:'no-cors'})
+                .then(() => entrar());
             }
         }
 
-        function prepararLink(premio) {
-            const urlBase = window.location.href.split('?')[0];
-            document.getElementById('caixa-link').innerText = urlBase + "?p=" + btoa(unescape(encodeURIComponent(premio)));
+        // LIBERAR RASPADINHA
+        function entrar() {
+            document.getElementById('tela-cadastro').style.display = 'none';
+            document.getElementById('tela-cliente').style.display = 'flex';
+            document.getElementById('premio-texto').innerText = premioGlobal;
+            
+            const cv = document.getElementById('scratchCanvas');
+            const cx = cv.getContext('2d');
+            cx.fillStyle = '#999'; cx.fillRect(0,0,280,280);
+            cx.fillStyle = 'white'; cx.font = 'bold 22px Oswald'; cx.textAlign = 'center';
+            cx.fillText('RASPE AQUI COM O DEDO', 140, 145);
+            
+            let m = false;
+            const raspar = (e) => {
+                if(!m) return;
+                const rect = cv.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+                cx.globalCompositeOperation = 'destination-out';
+                cx.beginPath(); cx.arc(x,y,35,0,6.28); cx.fill();
+            };
+            cv.onmousedown = () => m=true; cv.onmouseup = () => m=false; cv.onmousemove = raspar;
+            cv.ontouchstart = (e) => { m=true; e.preventDefault(); }; cv.ontouchend = () => m=false; cv.ontouchmove = raspar;
+        }
+
+        // FUNÇÕES DO ADMIN
+        function gerarLink(id) {
+            const base = window.location.href.split('?')[0];
+            document.getElementById('caixa-link').innerText = base + "?p=" + id;
         }
 
         function copiarLink() {
-            navigator.clipboard.writeText(document.getElementById('caixa-link').innerText);
-            alert("Copiado!");
+            const t = document.getElementById('caixa-link').innerText;
+            if(t.includes("Escolha")) return alert("Gere o link primeiro!");
+            navigator.clipboard.writeText(t);
+            alert("Copiado com sucesso!");
         }
-
-        function finalizarCadastro() {
-            const nome = document.getElementById('nome').value;
-            const cpf = document.getElementById('cpf').value;
-            const whats = document.getElementById('whats').value;
-            if(!nome || !cpf || !whats) return alert("Preencha!");
-
-            const url = `${scriptURL}?nome=${encodeURIComponent(nome)}&cpf=${encodeURIComponent(cpf)}&whatsapp=${encodeURIComponent(whats)}&premio=${encodeURIComponent(premioAtual)}`;
-            fetch(url, { mode: 'no-cors' }).then(() => {
-                document.getElementById('tela-cadastro').style.display = 'none';
-                document.getElementById('tela-cliente').style.display = 'flex';
-                document.getElementById('premio-texto').innerText = premioAtual;
-                iniciarRaspadinha();
-            });
-        }
-
-        function iniciarRaspadinha() {
-            const canvas = document.getElementById('scratchCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#888'; ctx.fillRect(0,0,300,300);
-            ctx.fillStyle = 'white'; ctx.font = '20px Arial'; ctx.textAlign = 'center';
-            ctx.fillText('RASPE AQUI', 150, 150);
-            let mouse = false;
-            const r = (e) => {
-                if(!mouse) return;
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-                ctx.globalCompositeOperation = 'destination-out';
-                ctx.beginPath(); ctx.arc(x, y, 30, 0, 6.28); ctx.fill();
-            };
-            canvas.onmousedown = () => mouse = true; canvas.onmouseup = () => mouse = false; canvas.onmousemove = r;
-            canvas.ontouchstart = (e) => { mouse = true; e.preventDefault(); }; canvas.ontouchend = () => mouse = false; canvas.ontouchmove = r;
-        }
-
-        function abrirModal() { document.getElementById('meuModal').style.display = 'flex'; }
-        function fecharModal() { document.getElementById('meuModal').style.display = 'none'; }
     </script>
 </body>
 </html>
