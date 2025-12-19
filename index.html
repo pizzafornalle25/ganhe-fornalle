@@ -3,98 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raspadinha Fornalle - Pizza Delivery</title>
+    <title>Raspadinha Fornalle</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
+        :root { --laranja: #ff9f5e; --bege: #fbd38d; --vinho: #800000; --cinza: #333; }
         
-        :root { 
-            --laranja: #ff9f5e; 
-            --bege: #fbd38d; 
-            --vinho: #800000; 
-            --cinza: #333;
-        }
-
         body { 
             font-family: 'Oswald', sans-serif; 
             margin: 0; 
             text-transform: uppercase; 
             background-color: var(--laranja); 
-            overflow-x: hidden; 
-        }
-        
-        /* LOGO */
-        .logo { font-size: 3rem; color: white; text-align: center; margin-bottom: 20px; line-height: 0.8; padding-top: 20px; }
-        .logo span { font-size: 1rem; display: block; margin-top: 10px; color: #ff0000; -webkit-text-stroke: 0.5px black; letter-spacing: 3px; }
-
-        /* CONTAINERS DE TELAS */
-        #tela-cadastro, #tela-cliente, #painel-admin { 
-            display: none; 
-            min-height: 100vh; 
+            display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; 
-            padding: 20px; 
-            box-sizing: border-box; 
         }
+
+        .logo { font-size: 3rem; color: white; text-align: center; line-height: 0.8; padding: 30px 0; width: 100%; }
+        .logo span { font-size: 1rem; display: block; margin-top: 10px; color: #ff0000; -webkit-text-stroke: 0.5px black; letter-spacing: 3px; }
+
+        .container-tela { display: none; width: 100%; max-width: 400px; flex-direction: column; align-items: center; padding: 0 20px 40px 20px; box-sizing: border-box; }
         
-        /* FORMULÁRIO */
         .form-container { 
             background: white; 
             padding: 25px; 
             border-radius: 15px; 
             width: 100%; 
-            max-width: 350px; 
             color: var(--cinza); 
             text-transform: none; 
             box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
-        }
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
-            box-sizing: border-box; 
-            font-size: 16px; 
-        }
-        
-        /* PAINEL ADMIN */
-        .grid-premios { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; width: 100%; max-width: 400px; }
-        .btn-admin { background: white; border: 2px solid var(--cinza); padding: 10px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; font-size: 0.8rem; border-radius: 8px; }
-        .caixa-link { background: #eee; padding: 10px; border-radius: 8px; word-break: break-all; width: 100%; max-width: 400px; text-align: center; font-size: 0.8rem; border: 1px dashed var(--cinza); text-transform: none; margin-bottom: 10px; color: var(--cinza); }
-        
-        /* RASPADINHA */
-        .scratch-container { 
-            position: relative; 
-            width: 280px; 
-            height: 280px; 
-            background: white; 
-            border-radius: 15px; 
             display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            border: 5px solid white; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
+            flex-direction: column; 
+            gap: 12px; 
         }
+
+        input { width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: Arial; }
+        
+        .grid-premios { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .btn-admin { background: white; border: 2px solid var(--cinza); padding: 12px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; border-radius: 8px; width: 100%; }
+        
+        .caixa-link { background: #eee; padding: 15px; border-radius: 8px; word-break: break-all; width: 100%; text-align: center; font-size: 0.8rem; border: 1px dashed var(--cinza); text-transform: none; margin: 15px 0; color: var(--cinza); box-sizing: border-box; }
+        
+        .scratch-container { position: relative; width: 280px; height: 280px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; border: 5px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); margin-bottom: 20px; }
         #premio-texto { color: var(--cinza); font-size: 1.5rem; text-align: center; padding: 10px; font-weight: bold; width: 100%; line-height: 1.2; }
         canvas { position: absolute; top: 0; left: 0; border-radius: 10px; cursor: crosshair; touch-action: none; }
         
-        /* BOTÕES */
-        .btn-enviar { width: 100%; background: var(--cinza); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-family: 'Oswald'; font-size: 1.2rem; margin-top: 10px; }
-        .btn-reg { background-color: var(--vinho); color: white; border: none; padding: 12px 25px; border-radius: 30px; margin-top: 20px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; border: 2px solid white; }
+        .btn-enviar { width: 100%; background: var(--cinza); color: white; border: none; padding: 18px; border-radius: 8px; cursor: pointer; font-family: 'Oswald'; font-size: 1.2rem; }
+        .btn-reg { background-color: var(--vinho); color: white; border: none; padding: 12px 30px; border-radius: 30px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; border: 2px solid white; }
 
-        /* MODAL REGULAMENTO */
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
         .modal-content { background: white; color: var(--cinza); padding: 25px; border-radius: 15px; width: 85%; max-width: 400px; text-transform: none; font-family: Arial, sans-serif; }
-        .modal-content h3 { color: var(--vinho); border-bottom: 2px solid var(--laranja); padding-bottom: 5px; margin-top: 0; }
-        .regra-item { margin-bottom: 12px; font-size: 0.9rem; line-height: 1.4; display: flex; align-items: flex-start; }
-        .regra-item b { color: var(--vinho); margin-right: 5px; }
+        .regra-box { border-bottom: 1px solid #eee; padding: 12px 0; font-size: 0.95rem; line-height: 1.4; }
+        .regra-box b { color: var(--vinho); display: block; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <div id="painel-admin">
-        <h2 style="color:white; margin-bottom:10px;">GERADOR FORNALLE</h2>
+    <div class="logo">FORNALLE<span>PIZZA DELIVERY</span></div>
+
+    <div id="painel-admin" class="container-tela">
+        <h2 style="color:white; margin-bottom:15px;">GERADOR DE LINKS</h2>
         <div class="grid-premios">
             <button class="btn-admin" onclick="gerarLink(1)">Pizza R$32</button>
             <button class="btn-admin" onclick="gerarLink(2)">Borda Grátis</button>
@@ -106,15 +73,15 @@
             <button class="btn-admin" onclick="gerarLink(0)" style="background:#ffcccc;">Sem Prêmio</button>
         </div>
         <div id="caixa-link" class="caixa-link">Escolha um prêmio acima</div>
-        <button onclick="copiarLink()" style="padding:15px; background:white; color:#333; border:none; border-radius:30px; cursor:pointer; width:100%; font-family:'Oswald'; font-weight:bold;">COPIAR LINK</button>
+        <button onclick="copiarLink()" class="btn-enviar" style="background:white; color:#333;">COPIAR LINK</button>
     </div>
 
-    <div id="tela-cadastro">
-        <div class="logo">FORNALLE<span>PIZZA DELIVERY</span></div>
+    <div id="tela-cadastro" class="container-tela">
         <div class="form-container">
-            <h2 id="titulo-cadastro" style="text-align:center; color:var(--laranja); margin:0 0 15px 0;">VALIDAR ACESSO</h2>
-            <input type="tel" id="cpf" placeholder="SEU CPF (Apenas números)">
-            <div id="campos-extras" style="display:none;">
+            <h2 style="text-align:center; color:var(--laranja); margin:0;">VALIDAR ACESSO</h2>
+            <p style="text-align:center; margin:0; font-size:0.85rem; font-family: Arial;">Identifique-se para liberar seu prêmio</p>
+            <input type="tel" id="cpf" placeholder="SEU CPF (Somente números)">
+            <div id="campos-extras" style="display:none; flex-direction: column; gap: 12px;">
                 <input type="text" id="nome" placeholder="NOME COMPLETO">
                 <input type="tel" id="whats" placeholder="WHATSAPP COM DDD">
             </div>
@@ -122,8 +89,7 @@
         </div>
     </div>
 
-    <div id="tela-cliente">
-        <div class="logo">FORNALLE<span>PIZZA DELIVERY</span></div>
+    <div id="tela-cliente" class="container-tela">
         <div class="scratch-container">
             <div id="premio-texto">Sorteando...</div>
             <canvas id="scratchCanvas" width="280" height="280"></canvas>
@@ -132,62 +98,30 @@
     </div>
 
     <div id="meuModal" class="modal">
-    <div class="modal-content">
-        <h3 style="color:var(--vinho); border-bottom: 2px solid var(--laranja); padding-bottom: 10px; margin-bottom: 15px; text-align: center;">📝 REGRAS DE RESGATE</h3>
-        
-        <div style="max-height: 350px; overflow-y: auto; text-transform: none; font-family: sans-serif; font-size: 0.95rem;">
-            
-            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                <b style="color: var(--vinho);">📅 VALIDADE:</b><br>
-                Seu prêmio expira em 7 dias corridos após a raspagem.
+        <div class="modal-content">
+            <h3 style="color:var(--vinho); border-bottom: 2px solid var(--laranja); padding-bottom: 10px; text-align: center; margin-top: 0;">📝 REGRAS DE RESGATE</h3>
+            <div style="max-height: 350px; overflow-y: auto;">
+                <div class="regra-box"><b>📅 VALIDADE:</b> O prêmio expira em 7 dias corridos após a raspagem.</div>
+                <div class="regra-box"><b>💰 PEDIDO MÍNIMO:</b> Válido para pedidos acima de R$ 29,90 (exceto taxa de entrega).</div>
+                <div class="regra-box"><b>🚫 NÃO CUMULATIVO:</b> Não acumulável com outros cupons ou pizzas em promoção.</div>
+                <div class="regra-box"><b>👤 USO PESSOAL:</b> Vinculado ao seu CPF, intransferível e limitado a um prêmio por campanha.</div>
+                <div class="regra-box"><b>📲 RESGATE:</b> Informe o seu CPF ao atendente no momento do pedido via WhatsApp.</div>
+                <p style="font-size: 0.75rem; color: #888; margin-top: 15px; font-style: italic; font-family: Arial;">*A Fornalle Pizza reserva-se o direito de encerrar esta ação promocional a qualquer momento.</p>
             </div>
-
-            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                <b style="color: var(--vinho);">💰 PEDIDO MÍNIMO:</b><br>
-                Válido para pedidos acima de R$ 29,90 (exceto taxa de entrega).
-            </div>
-
-            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                <b style="color: var(--vinho);">🚫 NÃO CUMULATIVO:</b><br>
-                Não pode ser usado junto com outros cupons ou pizzas em promoção.
-            </div>
-
-            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
-                <b style="color: var(--vinho);">👤 USO PESSOAL:</b><br>
-                O prêmio está vinculado ao seu CPF e não pode ser transferido.
-            </div>
-
-            <div style="padding: 10px 0;">
-                <b style="color: var(--vinho);">📲 COMO USAR:</b><br>
-                Informe seu prêmio e CPF ao atendente pelo WhatsApp.
-            </div>
-
-            <p style="font-size: 0.75rem; color: #888; margin-top: 15px; font-style: italic;">
-                *A Fornalle Pizza reserva-se o direito de encerrar a campanha a qualquer momento.
-            </p>
+            <button class="btn-enviar" onclick="this.parentElement.parentElement.style.display='none'">LI E CONCORDO</button>
         </div>
-
-        <button class="btn-enviar" onclick="this.parentElement.parentElement.style.display='none'">ENTENDI E CONCORDO</button>
     </div>
-</div>
 
     <script>
-        // CONFIGURAÇÃO INICIAL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzuPYs7TJX6UaMpBhgoylRn1DC_2nsThPOA0SDRrHulDCNIrYqk9_noEQV8gXApTUnK/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycby4GVvfYI9UYfOAck2Ric2qlEovg3JT7QUQqGJ8XOKHlj70YTJ6OPB086ii1Cp3cRV6/exec';
         const SENHA_MESTRA = "paodoce1530";
         let premioGlobal = "";
-        let novoUser = false;
+        let modoAtualizar = false;
 
-        // TABELA DE PRÊMIOS (Protege contra erros de URL e esconde do cliente)
         const tabelaPremios = {
-            1: "Vale uma pizza de R$32,00",
-            2: "Borda Recheada Grátis",
-            3: "Pastel de R$12,00 Grátis",
-            4: "Panzerotti de R$12,00 Grátis",
-            5: "Refri 200ml Grátis",
-            6: "10% de Desconto",
-            7: "Entrega Grátis",
-            0: "NÃO FOI DESTA VEZ! 🍕"
+            1: "Vale uma pizza de R$32,00", 2: "Borda Recheada Grátis", 3: "Pastel de R$12,00 Grátis",
+            4: "Panzerotti de R$12,00 Grátis", 5: "Refri 200ml Grátis", 6: "10% de Desconto",
+            7: "Entrega Grátis", 0: "NÃO FOI DESTA VEZ! 🍕"
         };
 
         window.onload = () => {
@@ -203,45 +137,49 @@
             }
         };
 
-        // LÓGICA DE CADASTRO E VERIFICAÇÃO
         function fluxo() {
             const cpf = document.getElementById('cpf').value;
-            if(!cpf || cpf.length < 11) return alert("Por favor, digite um CPF válido.");
+            if(!cpf || cpf.length < 11) return alert("Digite um CPF válido.");
             
-            if(!novoUser) {
+            if(document.getElementById('campos-extras').style.display === 'none') {
                 document.getElementById('btn-acao').innerText = "VERIFICANDO...";
-                fetch(`${scriptURL}?acao=verificar&cpf=${cpf}`)
-                .then(r => r.text())
-                .then(res => {
-                    if(res === "existe") { entrar(); }
-                    else {
-                        novoUser = true;
-                        document.getElementById('campos-extras').style.display = 'block';
+                fetch(`${scriptURL}?acao=verificar&cpf=${cpf}`).then(r => r.text()).then(res => {
+                    if(res === "existe") {
+                        modoAtualizar = true;
+                        enviarDados();
+                    } else {
+                        document.getElementById('campos-extras').style.display = 'flex';
                         document.getElementById('btn-acao').innerText = "CADASTRAR E RASPAR";
                     }
                 });
             } else {
-                const n = document.getElementById('nome').value;
-                const w = document.getElementById('whats').value;
-                if(!n || !w) return alert("Preencha seu Nome e WhatsApp!");
-                document.getElementById('btn-acao').innerText = "SALVANDO...";
-                fetch(`${scriptURL}?nome=${encodeURIComponent(n)}&cpf=${cpf}&whatsapp=${w}&premio=${encodeURIComponent(premioGlobal)}`,{mode:'no-cors'})
-                .then(() => entrar());
+                enviarDados();
             }
         }
 
-        // LIBERAR RASPADINHA
+        function enviarDados() {
+            const cpf = document.getElementById('cpf').value;
+            const nome = document.getElementById('nome').value || "Cliente Repetido";
+            const whats = document.getElementById('whats').value || "Já Cadastrado";
+            
+            if(!modoAtualizar && (!document.getElementById('nome').value || !document.getElementById('whats').value)) {
+                return alert("Preencha Nome e WhatsApp!");
+            }
+
+            document.getElementById('btn-acao').innerText = "PROCESSANDO...";
+            fetch(`${scriptURL}?nome=${encodeURIComponent(nome)}&cpf=${cpf}&whatsapp=${whats}&premio=${encodeURIComponent(premioGlobal)}`,{mode:'no-cors'})
+            .then(() => entrar());
+        }
+
         function entrar() {
             document.getElementById('tela-cadastro').style.display = 'none';
             document.getElementById('tela-cliente').style.display = 'flex';
             document.getElementById('premio-texto').innerText = premioGlobal;
-            
             const cv = document.getElementById('scratchCanvas');
             const cx = cv.getContext('2d');
             cx.fillStyle = '#999'; cx.fillRect(0,0,280,280);
-            cx.fillStyle = 'white'; cx.font = 'bold 22px Oswald'; cx.textAlign = 'center';
-            cx.fillText('RASPE AQUI COM O DEDO', 140, 145);
-            
+            cx.fillStyle = 'white'; cx.font = 'bold 20px Oswald'; cx.textAlign = 'center';
+            cx.fillText('RASPE AQUI COM O DEDO', 140, 140);
             let m = false;
             const raspar = (e) => {
                 if(!m) return;
@@ -255,7 +193,6 @@
             cv.ontouchstart = (e) => { m=true; e.preventDefault(); }; cv.ontouchend = () => m=false; cv.ontouchmove = raspar;
         }
 
-        // FUNÇÕES DO ADMIN
         function gerarLink(id) {
             const base = window.location.href.split('?')[0];
             document.getElementById('caixa-link').innerText = base + "?p=" + id;
