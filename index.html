@@ -10,49 +10,20 @@
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
         :root { --laranja: #ff9f5e; --bege: #fbd38d; --vinho: #800000; --cinza: #333; }
         
-        body { 
-            font-family: 'Oswald', sans-serif; 
-            margin: 0; 
-            text-transform: uppercase; 
-            background-color: var(--laranja); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            overflow-x: hidden; /* Evita barra de rolagem lateral se o confete sair um pouco */
-        }
-
+        body { font-family: 'Oswald', sans-serif; margin: 0; text-transform: uppercase; background-color: var(--laranja); display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         .logo { font-size: 3rem; color: white; text-align: center; line-height: 0.8; padding: 30px 0; width: 100%; }
         .logo span { font-size: 1rem; display: block; margin-top: 10px; color: #ff0000; -webkit-text-stroke: 0.5px black; letter-spacing: 3px; }
-
         .container-tela { display: none; width: 100%; max-width: 400px; flex-direction: column; align-items: center; padding: 0 20px 40px 20px; box-sizing: border-box; }
-        
-        .form-container { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 15px; 
-            width: 100%; 
-            color: var(--cinza); 
-            text-transform: none; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-        }
-
+        .form-container { background: white; padding: 25px; border-radius: 15px; width: 100%; color: var(--cinza); text-transform: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 12px; }
         input { width: 100%; padding: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: Arial; }
-        
         .grid-premios { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .btn-admin { background: white; border: 2px solid var(--cinza); padding: 12px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; border-radius: 8px; width: 100%; }
-        
         .caixa-link { background: #eee; padding: 15px; border-radius: 8px; word-break: break-all; width: 100%; text-align: center; font-size: 0.8rem; border: 1px dashed var(--cinza); text-transform: none; margin: 15px 0; color: var(--cinza); box-sizing: border-box; }
-        
         .scratch-container { position: relative; width: 280px; height: 280px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; border: 5px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); margin-bottom: 20px; }
         #premio-texto { color: var(--cinza); font-size: 1.5rem; text-align: center; padding: 10px; font-weight: bold; width: 100%; line-height: 1.2; }
         canvas { position: absolute; top: 0; left: 0; border-radius: 10px; cursor: crosshair; touch-action: none; }
-        
         .btn-enviar { width: 100%; background: var(--cinza); color: white; border: none; padding: 18px; border-radius: 8px; cursor: pointer; font-family: 'Oswald'; font-size: 1.2rem; }
         .btn-reg { background-color: var(--vinho); color: white; border: none; padding: 12px 30px; border-radius: 30px; cursor: pointer; font-family: 'Oswald'; font-weight: bold; border: 2px solid white; }
-
         .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
         .modal-content { background: white; color: var(--cinza); padding: 25px; border-radius: 15px; width: 85%; max-width: 400px; text-transform: none; font-family: Arial, sans-serif; }
         .regra-box { border-bottom: 1px solid #eee; padding: 12px 0; font-size: 0.95rem; line-height: 1.4; }
@@ -106,14 +77,11 @@
         <div class="modal-content">
             <h3 style="color:var(--vinho); border-bottom: 2px solid var(--laranja); padding-bottom: 10px; text-align: center; margin-top: 0;">📝 REGRAS DE RESGATE</h3>
             <div style="max-height: 350px; overflow-y: auto;">
-                <div class="regra-box"><b>📅 VALIDADE:</b> O prêmio expira em 7 dias corridos após a raspagem.</div>
-                <div class="regra-box"><b>💰 PEDIDO MÍNIMO:</b> Válido para pedidos acima de R$ 29,90 (exceto taxa de entrega).</div>
-                <div class="regra-box"><b>🚫 NÃO CUMULATIVO:</b> Não acumulável com outros cupons ou pizzas em promoção.</div>
-                <div class="regra-box"><b>👤 USO PESSOAL:</b> Vinculado ao seu CPF, intransferível e limitado a um prêmio por campanha.</div>
-                <div class="regra-box"><b>📲 RESGATE:</b> Informe o seu CPF ao atendente no momento do pedido via WhatsApp.</div>
-                <p style="font-size: 0.75rem; color: #888; margin-top: 15px; font-style: italic; font-family: Arial;">*A Fornalle Pizza reserva-se o direito de encerrar esta ação promocional a qualquer momento.</p>
+                <div class="regra-box"><b>📅 VALIDADE:</b> O prêmio expira em 7 dias corridos.</div>
+                <div class="regra-box"><b>💰 PEDIDO MÍNIMO:</b> Consulte valor no WhatsApp.</div>
+                <div class="regra-box"><b>👤 USO PESSOAL:</b> Vinculado ao seu CPF.</div>
             </div>
-            <button class="btn-enviar" onclick="this.parentElement.parentElement.style.display='none'">LI E CONCORDO</button>
+            <button class="btn-enviar" onclick="this.parentElement.parentElement.style.display='none'">ENTENDI</button>
         </div>
     </div>
 
@@ -121,86 +89,95 @@
         const scriptURL = 'https://script.google.com/macros/s/AKfycby4GVvfYI9UYfOAck2Ric2qlEovg3JT7QUQqGJ8XOKHlj70YTJ6OPB086ii1Cp3cRV6/exec';
         const SENHA_MESTRA = "paodoce1530";
         let premioGlobal = "";
-        let modoAtualizar = false;
-        let confeteJaSolto = false; // Variável para controlar se o confete já foi disparado
+        let confeteJaSolto = false;
 
         const tabelaPremios = {
-            1: "Vale uma pizza de R$32,00",
-            2: "Borda Recheada Grátis",
-            3: "Pastel de R$12,00 Grátis",
-            4: "Panzerotti de R$12,00 Grátis",
-            5: "Refri 200ml Grátis",
-            6: "R$5,00 de Desconto",
-            7: "Entrega Grátis",
-            8: "R$3,00 de Desconto",
-            9: "R$2,00 de Desconto",
-            0: "NÃO FOI DESTA VEZ! 🍕"
+            1: "Vale uma pizza de R$32,00", 2: "Borda Recheada Grátis",
+            3: "Pastel de R$12,00 Grátis", 4: "Panzerotti de R$12,00 Grátis",
+            5: "Refri 200ml Grátis", 6: "R$5,00 de Desconto",
+            7: "Entrega Grátis", 8: "R$3,00 de Desconto",
+            9: "R$2,00 de Desconto", 0: "NÃO FOI DESTA VEZ! 🍕"
         };
 
         window.onload = () => {
             const params = new URLSearchParams(window.location.search);
             const p = params.get('p');
-            if (p !== null && tabelaPremios[p] !== undefined) {
+
+            // SE NÃO TEM PRÊMIO NO LINK: É ACESSO ADMIN
+            if (p === null) {
+                let s = prompt("Senha Admin:");
+                if (s === SENHA_MESTRA) {
+                    document.getElementById('painel-admin').style.display = 'flex';
+                } else {
+                    alert("Acesso negado.");
+                    window.location.reload();
+                }
+                return;
+            }
+
+            // SE JÁ JOGOU: APENAS AVISA E NÃO REDIRECIONA
+            if (localStorage.getItem('raspou_fornalle_2026')) {
+                alert("Você já participou desta promoção hoje!");
+                // Não faz nada, a página ficará bloqueada/vazia.
+                return;
+            }
+
+            // SE TUDO OK: MOSTRA CADASTRO
+            if (tabelaPremios[p] !== undefined) {
                 document.getElementById('tela-cadastro').style.display = 'flex';
                 premioGlobal = tabelaPremios[p];
-            } else {
-                let s = prompt("Senha Admin:");
-                if (s === SENHA_MESTRA) document.getElementById('painel-admin').style.display = 'flex';
-                else window.location.reload();
             }
         };
 
         function fluxo() {
             const cpf = document.getElementById('cpf').value;
-            if(!cpf || cpf.length < 11) return alert("Digite um CPF válido.");
+            if(!cpf || cpf.length < 11) return alert("CPF inválido.");
             
-            if(document.getElementById('campos-extras').style.display === 'none') {
-                document.getElementById('btn-acao').innerText = "VERIFICANDO...";
-                fetch(`${scriptURL}?acao=verificar&cpf=${cpf}`).then(r => r.text()).then(res => {
+            document.getElementById('btn-acao').innerText = "VERIFICANDO...";
+            
+            fetch(`${scriptURL}?acao=verificar&cpf=${cpf}`)
+                .then(r => r.text())
+                .then(res => {
                     if(res === "existe") {
-                        modoAtualizar = true;
-                        enviarDados();
+                        // CLIENTE ANTIGO: Pula direto
+                        enviarDadosOmitidos(cpf);
                     } else {
+                        // NOVO CLIENTE: Mostra campos
                         document.getElementById('campos-extras').style.display = 'flex';
                         document.getElementById('btn-acao').innerText = "CADASTRAR E RASPAR";
+                        if(document.getElementById('nome').value && document.getElementById('whats').value) enviarDados();
                     }
                 });
-            } else {
-                enviarDados();
-            }
+        }
+
+        function enviarDadosOmitidos(cpf) {
+            fetch(`${scriptURL}?nome=Recorrente&cpf=${cpf}&whatsapp=Ja_Cadastrado&premio=${encodeURIComponent(premioGlobal)}`,{mode:'no-cors'})
+            .then(() => entrar());
         }
 
         function enviarDados() {
             const cpf = document.getElementById('cpf').value;
-            const nome = document.getElementById('nome').value || "Cliente Repetido";
-            const whats = document.getElementById('whats').value || "Já Cadastrado";
-            
-            if(!modoAtualizar && (!document.getElementById('nome').value || !document.getElementById('whats').value)) {
-                return alert("Preencha Nome e WhatsApp!");
-            }
+            const nome = document.getElementById('nome').value;
+            const whats = document.getElementById('whats').value;
+            if(!nome || !whats) return alert("Preencha tudo!");
 
-            document.getElementById('btn-acao').innerText = "PROCESSANDO...";
             fetch(`${scriptURL}?nome=${encodeURIComponent(nome)}&cpf=${cpf}&whatsapp=${whats}&premio=${encodeURIComponent(premioGlobal)}`,{mode:'no-cors'})
             .then(() => entrar());
         }
 
         function entrar() {
+            localStorage.setItem('raspou_fornalle_2026', 'true');
             document.getElementById('tela-cadastro').style.display = 'none';
             document.getElementById('tela-cliente').style.display = 'flex';
             document.getElementById('premio-texto').innerText = premioGlobal;
+            
             const cv = document.getElementById('scratchCanvas');
             const cx = cv.getContext('2d');
-            
-            // Reseta estado do confete
-            confeteJaSolto = false;
-
             cx.fillStyle = '#999'; cx.fillRect(0,0,280,280);
-            cx.fillStyle = 'white'; cx.font = 'bold 20px Oswald'; cx.textAlign = 'center';
-            cx.fillText('RASPE AQUI COM O DEDO', 140, 140);
+            cx.fillStyle = 'white'; cx.font = 'bold 18px Oswald'; cx.textAlign = 'center';
+            cx.fillText('RASPE AQUI', 140, 140);
             
             let m = false;
-            let contadorRaspagem = 0; // Contador para otimizar a verificação
-
             const raspar = (e) => {
                 if(!m) return;
                 const rect = cv.getBoundingClientRect();
@@ -208,84 +185,49 @@
                 const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
                 cx.globalCompositeOperation = 'destination-out';
                 cx.beginPath(); cx.arc(x,y,35,0,6.28); cx.fill();
-
-                 // Verifica se já raspou o suficiente a cada 15 movimentos (para não travar o celular)
-                contadorRaspagem++;
-                if (contadorRaspagem % 15 === 0) {
-                    verificarPorcentagemRaspada(cx, cv.width, cv.height);
-                }
+                verificarRaspagem(cx, cv.width, cv.height);
             };
             cv.onmousedown = () => m=true; cv.onmouseup = () => m=false; cv.onmousemove = raspar;
             cv.ontouchstart = (e) => { m=true; e.preventDefault(); }; cv.ontouchend = () => m=false; cv.ontouchmove = raspar;
         }
 
-        // Função que calcula quantos % já foi raspado
-        function verificarPorcentagemRaspada(cx, width, height) {
-            if (confeteJaSolto) return; // Se já soltou, não verifica mais
-
-            // Obtém os dados dos pixels do canvas
-            const imageData = cx.getImageData(0, 0, width, height);
-            const pixels = imageData.data;
-            let pixelsTransparentes = 0;
-
-            // Percorre os pixels (a cada 4 valores temos R, G, B, Alpha)
-            for (let i = 3; i < pixels.length; i += 4) {
-                // Se o canal Alpha (transparência) for 0, o pixel está transparente
-                if (pixels[i] === 0) {
-                    pixelsTransparentes++;
-                }
-            }
-
-            const totalPixels = width * height;
-            const porcentagem = (pixelsTransparentes / totalPixels) * 100;
-
-            // Se raspou mais de 50%, solta os confetes
-            if (porcentagem > 50) {
-                soltarConfete();
+        function verificarRaspagem(cx, w, h) {
+            if (confeteJaSolto) return;
+            const data = cx.getImageData(0, 0, w, h).data;
+            let trans = 0;
+            for (let i = 3; i < data.length; i += 4) if (data[i] === 0) trans++;
+            
+            // CONFETE COM 20% RASPADO
+            if ((trans / (w * h)) > 0.20) {
                 confeteJaSolto = true;
-                // Opcional: Remove o canvas para revelar totalmente o prêmio
-                // document.getElementById('scratchCanvas').style.display = 'none'; 
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#800000', '#ff9f5e', '#fbd38d'] });
             }
         }
 
-        // Função para disparar o efeito de confete
-        function soltarConfete() {
-            var duration = 3 * 1000; // Duração de 3 segundos
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
-
-            function randomInRange(min, max) {
-                return Math.random() * (max - min) + min;
-            }
-
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
-                var particleCount = 50 * (timeLeft / duration);
-                
-                // Cores da Fornalle (Vinho, Laranja, Bege)
-                var coresConfete = ['#800000', '#ff9f5e', '#fbd38d', '#ffffff'];
-
-                // Lança confetes de dois lados da tela
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: coresConfete }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: coresConfete }));
-            }, 250);
-        }
-
-        function gerarLink(id) {
+function gerarLink(id) {
+            // Pega a URL base (ex: http://seusite.com/index.html)
             const base = window.location.href.split('?')[0];
-            document.getElementById('caixa-link').innerText = base + "?p=" + id;
+            
+            // Gera um código aleatório de 6 caracteres para tornar o link único
+            const tokenUnico = Math.random().toString(36).substring(2, 8);
+            
+            // Monta o link com o prêmio (p) e o token (t)
+            const linkFinal = `${base}?p=${id}&t=${tokenUnico}`;
+            
+            // Exibe na caixa para você copiar
+            document.getElementById('caixa-link').innerText = linkFinal;
+            
+            // Pequeno feedback visual no botão para saber que mudou
+            console.log("Link único gerado: " + tokenUnico);
         }
 
         function copiarLink() {
-            const t = document.getElementById('caixa-link').innerText;
-            if(t.includes("Escolha")) return alert("Gere o link primeiro!");
-            navigator.clipboard.writeText(t);
-            alert("Copiado com sucesso!");
+            const link = document.getElementById('caixa-link').innerText;
+            if(link.includes("Escolha")) return alert("Gere o link primeiro!");
+            
+            navigator.clipboard.writeText(link).then(() => {
+                alert("Link Único Copiado! Você já pode enviar.");
+            });
         }
     </script>
 </body>
