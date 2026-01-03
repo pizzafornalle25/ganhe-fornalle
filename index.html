@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raspadinha Fornalle</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
         :root { --laranja: #ff9f5e; --bege: #fbd38d; --vinho: #800000; --cinza: #333; }
@@ -16,6 +18,7 @@
             display: flex; 
             flex-direction: column; 
             align-items: center; 
+            overflow-x: hidden; /* Evita barra de rolagem lateral se o confete sair um pouco */
         }
 
         .logo { font-size: 3rem; color: white; text-align: center; line-height: 0.8; padding: 30px 0; width: 100%; }
@@ -68,10 +71,10 @@
             <button class="btn-admin" onclick="gerarLink(3)">Pastel R$12</button>
             <button class="btn-admin" onclick="gerarLink(4)">Panzerotti R$12</button>
             <button class="btn-admin" onclick="gerarLink(5)">Refri 200ml</button>
-            <button class="btn-admin" onclick="gerarLink(6)">R$ 5,00</button>
-            <button class="btn-admin" onclick="gerarLink(7)">R$ 2,00</button>
-            <button class="btn-admin" onclick="gerarLink(8)">R$ 3,00</button>
-            <button class="btn-admin" onclick="gerarLink(9)">Entrega Grátis</button>
+            <button class="btn-admin" onclick="gerarLink(6)">Desconto R$5,00</button>
+            <button class="btn-admin" onclick="gerarLink(8)">Desconto R$3,00</button>
+            <button class="btn-admin" onclick="gerarLink(9)">Desconto R$2,00</button>
+            <button class="btn-admin" onclick="gerarLink(7)">Entrega Grátis</button>
             <button class="btn-admin" onclick="gerarLink(0)" style="background:#ffcccc;">Sem Prêmio</button>
         </div>
         <div id="caixa-link" class="caixa-link">Escolha um prêmio acima</div>
@@ -119,11 +122,19 @@
         const SENHA_MESTRA = "paodoce1530";
         let premioGlobal = "";
         let modoAtualizar = false;
+        let confeteJaSolto = false; // Variável para controlar se o confete já foi disparado
 
         const tabelaPremios = {
-            1: "Vale uma pizza de R$32,00", 2: "Borda Recheada Grátis", 3: "Pastel de R$12,00 Grátis",
-            4: "Panzerotti de R$12,00 Grátis", 5: "Refri 200ml Grátis", 6: "R$ 5,00", 7:"R$ 2,00", 8:"R$ 3,00"
-            9: "Entrega Grátis", 0: "NÃO FOI DESTA VEZ! 🍕"
+            1: "Vale uma pizza de R$32,00",
+            2: "Borda Recheada Grátis",
+            3: "Pastel de R$12,00 Grátis",
+            4: "Panzerotti de R$12,00 Grátis",
+            5: "Refri 200ml Grátis",
+            6: "R$5,00 de Desconto",
+            7: "Entrega Grátis",
+            8: "R$3,00 de Desconto",
+            9: "R$2,00 de Desconto",
+            0: "NÃO FOI DESTA VEZ! 🍕"
         };
 
         window.onload = () => {
@@ -179,10 +190,17 @@
             document.getElementById('premio-texto').innerText = premioGlobal;
             const cv = document.getElementById('scratchCanvas');
             const cx = cv.getContext('2d');
+            
+            // Reseta estado do confete
+            confeteJaSolto = false;
+
             cx.fillStyle = '#999'; cx.fillRect(0,0,280,280);
             cx.fillStyle = 'white'; cx.font = 'bold 20px Oswald'; cx.textAlign = 'center';
             cx.fillText('RASPE AQUI COM O DEDO', 140, 140);
+            
             let m = false;
+            let contadorRaspagem = 0; // Contador para otimizar a verificação
+
             const raspar = (e) => {
                 if(!m) return;
                 const rect = cv.getBoundingClientRect();
@@ -190,9 +208,72 @@
                 const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
                 cx.globalCompositeOperation = 'destination-out';
                 cx.beginPath(); cx.arc(x,y,35,0,6.28); cx.fill();
+
+                 // Verifica se já raspou o suficiente a cada 15 movimentos (para não travar o celular)
+                contadorRaspagem++;
+                if (contadorRaspagem % 15 === 0) {
+                    verificarPorcentagemRaspada(cx, cv.width, cv.height);
+                }
             };
             cv.onmousedown = () => m=true; cv.onmouseup = () => m=false; cv.onmousemove = raspar;
             cv.ontouchstart = (e) => { m=true; e.preventDefault(); }; cv.ontouchend = () => m=false; cv.ontouchmove = raspar;
+        }
+
+        // Função que calcula quantos % já foi raspado
+        function verificarPorcentagemRaspada(cx, width, height) {
+            if (confeteJaSolto) return; // Se já soltou, não verifica mais
+
+            // Obtém os dados dos pixels do canvas
+            const imageData = cx.getImageData(0, 0, width, height);
+            const pixels = imageData.data;
+            let pixelsTransparentes = 0;
+
+            // Percorre os pixels (a cada 4 valores temos R, G, B, Alpha)
+            for (let i = 3; i < pixels.length; i += 4) {
+                // Se o canal Alpha (transparência) for 0, o pixel está transparente
+                if (pixels[i] === 0) {
+                    pixelsTransparentes++;
+                }
+            }
+
+            const totalPixels = width * height;
+            const porcentagem = (pixelsTransparentes / totalPixels) * 100;
+
+            // Se raspou mais de 50%, solta os confetes
+            if (porcentagem > 50) {
+                soltarConfete();
+                confeteJaSolto = true;
+                // Opcional: Remove o canvas para revelar totalmente o prêmio
+                // document.getElementById('scratchCanvas').style.display = 'none'; 
+            }
+        }
+
+        // Função para disparar o efeito de confete
+        function soltarConfete() {
+            var duration = 3 * 1000; // Duração de 3 segundos
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                
+                // Cores da Fornalle (Vinho, Laranja, Bege)
+                var coresConfete = ['#800000', '#ff9f5e', '#fbd38d', '#ffffff'];
+
+                // Lança confetes de dois lados da tela
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: coresConfete }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: coresConfete }));
+            }, 250);
         }
 
         function gerarLink(id) {
@@ -208,5 +289,4 @@
         }
     </script>
 </body>
-
 </html>
