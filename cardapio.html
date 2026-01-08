@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Fornalle - Delivery</title>
+    <style>
+        :root { --vinho: #800000; --laranja: #ff9f5e; --cinza: #f4f4f4; --verde: #25D366; --vermelho: #d9534f; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--cinza); padding-bottom: 100px; }
+        
+        header { background: var(--vinho); color: white; text-align: center; padding: 15px 5px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .tabs-container { display: flex; overflow-x: auto; gap: 8px; padding: 10px; scrollbar-width: none; }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        
+        .btn-tab { background: rgba(255,255,255,0.2); border: none; padding: 10px 20px; border-radius: 20px; color: white; font-weight: bold; white-space: nowrap; cursor: pointer; }
+        .btn-tab.active { background: var(--laranja); }
+        .btn-tab.disabled { background: #ccc !important; color: #888 !important; cursor: not-allowed; opacity: 0.6; }
+
+        .container { max-width: 500px; margin: auto; padding: 15px; }
+        
+        .item { background: white; margin: 10px 0; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .item-info { flex: 1; }
+        .item-nome { font-weight: bold; color: #333; }
+        .item-preco { color: var(--vinho); font-weight: bold; margin-top: 5px; }
+        
+        .controles-qtd { display: flex; align-items: center; gap: 12px; background: #f8f8f8; padding: 5px 10px; border-radius: 25px; border: 1px solid #ddd; }
+        .btn-qtd { background: var(--vinho); color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .qtd-num { font-weight: bold; min-width: 15px; text-align: center; }
+
+        .secao-2sabores { background: #fff; padding: 20px; border-radius: 15px; border: 2px solid var(--vinho); margin-bottom: 20px; }
+        .titulo-escolha { color: var(--vinho); font-weight: bold; margin: 15px 0 2px 0; display: block; }
+        .preco-metade-label { font-size: 0.85rem; color: #666; display: block; margin-bottom: 10px; font-weight: bold; }
+        .select-personalizado { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 1rem; }
+        .btn-confirmar-meia { background: var(--verde); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+        #modal-checkout { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .checkout-header { display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #ddd; padding-bottom: 15px; margin-bottom: 20px; }
+        .btn-voltar { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--vinho); }
+
+        .carrinho-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        .resumo-linha { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.9rem; color: #555; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        .oculto { display: none; }
+
+        .barra-fixa { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); z-index: 900; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; }
+        .btn-abrir-checkout { background: var(--verde); color: white; padding: 12px 25px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; }
+        
+        /* Estilo Cupom */
+        .area-cupom { background:#fff; padding:15px; border-radius:12px; margin:15px 0; border: 1px dashed var(--vinho); }
+        .btn-aplicar-cupom { background: var(--vinho); color: white; border: none; padding: 0 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 style="margin:0; font-size: 1.2rem;">FORNALLE</h1>
+    <div class="tabs-container" id="menu-abas"></div>
+</header>
+
+<div class="container">
+    <div id="lista-cardapio">A carregar produtos...</div>
+</div>
+
+<div id="modal-checkout">
+    <div class="checkout-header">
+        <button class="btn-voltar" onclick="fecharCheckout()">←</button>
+        <h2 style="margin:0; color:var(--vinho);">Finalizar Pedido</h2>
+    </div>
+    <div id="carrinho-lista"></div>
+
+    <div class="area-cupom">
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--vinho);">Cupom de Desconto:</label>
+        <div style="display: flex; gap: 10px; margin-top: 5px;">
+            <input type="text" id="cupom-texto" placeholder="Insira um cupom" style="margin:0; text-transform: uppercase;">
+            <button class="btn-aplicar-cupom" onclick="aplicarCupom()">APLICAR</button>
+        </div>
+        <small id="cupom-msg" style="display:block; margin-top:5px; font-weight:bold;"></small>
+    </div>
+
+    <div style="background:#f9f9f9; padding:15px; border-radius:12px; margin:20px 0;">
+        <input type="text" id="cliente-nome" placeholder="Seu Nome">
+        <select id="metodo-envio" onchange="alternarMetodo()">
+            <option value="entrega">Entrega ao Domicílio</option>
+            <option value="retirada">Retirar na Pizzaria</option>
+        </select>
+        <div id="campos-endereco">
+            <input type="text" id="cliente-cep" placeholder="Digite o seu CEP" onblur="buscarCEP()">
+            <input type="text" id="cliente-rua" placeholder="Rua / Bairro" readonly style="background: #e9e9e9;">
+            <input type="text" id="cliente-numero" placeholder="Número e Complemento">
+        </div>
+        <select id="cliente-pgto">
+            <option value="">Forma de Pagamento</option>
+            <option value="Pix">Pix</option>
+            <option value="Cartão">Cartão</option>
+            <option value="Dinheiro">Dinheiro</option>
+        </select>
+    </div>
+    <div style="margin-top: 10px;">
+        <label style="font-size: 0.85rem; font-weight: bold; color: var(--vinho);">Observações:</label>
+        <textarea id="cliente-obs" placeholder="Ex: Retirar cebola, Troco para 50, etc..." 
+                  style="width: 100%; height: 60px; border-radius: 8px; border: 1px solid #ddd; padding: 10px; box-sizing: border-box; font-family: sans-serif; resize: none;"></textarea>
+    </div>
+
+    <div id="resumo-financeiro">
+        <div class="resumo-linha"><span>Subtotal:</span> <span id="resumo-subtotal">R$ 0,00</span></div>
+        <div id="linha-desconto" class="resumo-linha" style="display:none; color: green; font-weight: bold;">
+            <span>Desconto:</span> <span id="resumo-desconto">- R$ 0,00</span>
+        </div>
+        <div class="resumo-linha"><span>Taxa de Entrega:</span> <span id="resumo-taxa">R$ 0,00</span></div>
+        <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.2rem; margin-top:10px; border-top: 1px solid #ddd; padding-top: 10px;">
+            <span>TOTAL:</span>
+            <span id="checkout-total" style="color: var(--vinho);">R$ 0,00</span>
+        </div>
+    </div>
+    <button onclick="enviarPedido()" style="width:100%; background:var(--verde); color:white; padding:18px; border:none; border-radius:30px; font-weight:bold; margin-top:20px; cursor:pointer;">ENVIAR PARA O WHATSAPP</button>
+</div>
+
+<div class="barra-fixa">
+    <div>
+        <div style="font-size:0.7rem; color:#666;">Subtotal</div>
+        <div id="barra-total" style="font-weight:bold; color:var(--vinho); font-size:1.1rem;">R$ 0,00</div>
+    </div>
+    <button class="btn-abrir-checkout" onclick="abrirCheckout()">VER CARRINHO</button>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw8ncZ-8PVPZnK_ulOedZf0TSTGfg8MA_5L4CjvsOVi38QTUOZm065InjvMwltAu2Qs/exec';
+    const googleApiKey = 'AIzaSyBbaZD03gvreFCNyE_c-nUWoZYQfig5qJQ';
+    
+    const PRECO_POR_KM = 2.00;
+    const TAXA_MINIMA = 5.00;
+
+    let dadosGerais = {};
+    let carrinho = [];
+    let taxaEntrega = 0;
+    let taxaOriginal = 0; // Guardar a taxa real antes do frete grátis
+    let distanciaKM = "0.0";
+    let listaCuponsGeral = {}; // Adicionado
+    let cupomAtivo = null;     // Adicionado
+    let descontoCalculado = 0; // Adicionado
+
+    async function load() {
+        try {
+            // Carrega Cardápio e Cupons simultaneamente
+            const [resCardapio, resCupons] = await Promise.all([
+                fetch(scriptURL + "?acao=getCardapio", { redirect: "follow" }),
+                fetch(scriptURL + "?acao=getCupons", { redirect: "follow" })
+            ]);
+            
+            dadosGerais = await resCardapio.json();
+            listaCuponsGeral = await resCupons.json(); // Adicionado
+
+            const menu = document.getElementById('menu-abas');
+            menu.innerHTML = "";
+            const abas = Object.keys(dadosGerais);
+            abas.forEach((aba, i) => {
+                const btn = document.createElement('button');
+                const temItemDisponivel = dadosGerais[aba].some(p => p.disponivel && p.disponivel.toString().trim().toUpperCase() === "SIM");
+
+                if (!temItemDisponivel) {
+                    btn.className = `btn-tab disabled`;
+                    btn.innerText = aba.replace(/_/g, ' ') + " (Indisponível)";
+                } else {
+                    btn.className = `btn-tab ${i === 0 ? 'active' : ''}`;
+                    btn.innerText = aba.replace(/_/g, ' ');
+                    btn.onclick = () => {
+                        document.querySelectorAll('.btn-tab').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        render(aba);
+                    };
+                }
+                menu.appendChild(btn);
+            });
+            const primeiraDisponivel = abas.find(aba => dadosGerais[aba].some(p => p.disponivel && p.disponivel.toString().trim().toUpperCase() === "SIM"));
+            if (primeiraDisponivel) render(primeiraDisponivel);
+        } catch (e) { console.error(e); }
+    }
+
+    function render(aba) {
+        const div = document.getElementById('lista-cardapio');
+        div.innerHTML = `<h2 style="color:var(--vinho); font-size:1.1rem; border-left:4px solid var(--laranja); padding-left:10px;">${aba.replace(/_/g, ' ')}</h2>`;
+        const itensDisponiveis = dadosGerais[aba].filter(p => p.disponivel && p.disponivel.toString().trim().toUpperCase() === "SIM");
+        
+        if (aba === "Pizza_2_Sabores") {
+            let opcoes = itensDisponiveis.map(p => {
+                let valorMetade = (p.precoMeia && p.precoMeia > 0) ? p.precoMeia : (p.precoInteira / 2);
+                return `<option value="${p.id}" data-preco="${valorMetade}">${p.nome}</option>`;
+            }).join('');
+
+            div.innerHTML += `
+                <div class="secao-2sabores">
+                    <p style="font-size:0.8rem; color:var(--vinho); margin-bottom:15px;">* Será cobrado o valor da maior metade.</p>
+                    <label class="titulo-escolha">1º Sabor:</label>
+                    <select id="sabor1" class="select-personalizado" onchange="atualizarPrecosMeia()">${opcoes}</select>
+                    <span id="preco-s1" class="preco-metade-label">Metade: R$ 0,00</span>
+
+                    <label class="titulo-escolha">2º Sabor:</label>
+                    <select id="sabor2" class="select-personalizado" onchange="atualizarPrecosMeia()">${opcoes}</select>
+                    <span id="preco-s2" class="preco-metade-label">Metade: R$ 0,00</span>
+
+                    <button class="btn-confirmar-meia" onclick="addMeia()">ADICIONAR AO CARRINHO</button>
+                </div>`;
+            setTimeout(atualizarPrecosMeia, 100);
+        } else {
+            itensDisponiveis.forEach(p => {
+                const idVisual = `qtd-${aba}-${p.id}`;
+                div.innerHTML += `<div class="item">
+                    <div class="item-info">
+                        <div class="item-nome">${p.nome}</div>
+                        <small style="color:#666">${p.descricao||''}</small>
+                        <div class="item-preco">R$ ${p.precoInteira.toFixed(2)}</div>
+                    </div>
+                    <div class="controles-qtd">
+                        <button class="btn-qtd" onclick="mudarQtd('${aba}','${p.id}',-1)">-</button>
+                        <span class="qtd-num" id="${idVisual}">${getQtd(p.nome, aba)}</span>
+                        <button class="btn-qtd" onclick="mudarQtd('${aba}','${p.id}',1)">+</button>
+                    </div>
+                </div>`;
+            });
+        }
+    }
+
+    function atualizarPrecosMeia() {
+        const s1 = document.getElementById('sabor1');
+        const s2 = document.getElementById('sabor2');
+        if(!s1 || !s2) return;
+        const p1 = parseFloat(s1.options[s1.selectedIndex].getAttribute('data-preco') || 0);
+        const p2 = parseFloat(s2.options[s2.selectedIndex].getAttribute('data-preco') || 0);
+        document.getElementById('preco-s1').innerText = `Metade: R$ ${p1.toFixed(2).replace('.', ',')}`;
+        document.getElementById('preco-s2').innerText = `Metade: R$ ${p2.toFixed(2).replace('.', ',')}`;
+    }
+
+    function getQtd(nome, categoria) { 
+        const item = carrinho.find(i => i.nome === nome && i.categoria === categoria); 
+        return item ? item.qtd : 0; 
+    }
+
+    function mudarQtd(aba, id, delta) {
+        const p = dadosGerais[aba].find(i => i.id == id);
+        const index = carrinho.findIndex(i => i.nome === p.nome && i.categoria === aba);
+        if (index > -1) { 
+            carrinho[index].qtd += delta; 
+            if (carrinho[index].qtd <= 0) carrinho.splice(index, 1); 
+        } else if (delta > 0) { 
+            carrinho.push({ nome: p.nome, preco: p.precoInteira, qtd: 1, categoria: aba }); 
+        }
+        const span = document.getElementById(`qtd-${aba}-${id}`); 
+        if(span) span.innerText = getQtd(p.nome, aba);
+        attTotal();
+    }
+
+    function addMeia() {
+        const s1 = document.getElementById('sabor1'); 
+        const s2 = document.getElementById('sabor2');
+        const nome1 = s1.options[s1.selectedIndex].text;
+        const nome2 = s2.options[s2.selectedIndex].text;
+        const preco1 = parseFloat(s1.options[s1.selectedIndex].getAttribute('data-preco'));
+        const preco2 = parseFloat(s2.options[s2.selectedIndex].getAttribute('data-preco'));
+        const precoFinal = Math.max(preco1, preco2) * 2; 
+        const nomeCompleto = `1/2 ${nome1} | 1/2 ${nome2}`;
+        const index = carrinho.findIndex(i => i.nome === nomeCompleto && i.categoria === "Pizza_2_Sabores");
+        if(index > -1) { carrinho[index].qtd++; } else {
+            carrinho.push({ nome: nomeCompleto, preco: precoFinal, qtd: 1, categoria: "Pizza_2_Sabores" });
+        }
+        attTotal(); 
+        alert("Adicionado: " + nomeCompleto);
+    }
+
+    // FUNÇÕES DE CUPOM (ADICIONADAS)
+    function aplicarCupom() {
+        const cod = document.getElementById('cupom-texto').value.trim().toUpperCase();
+        const msg = document.getElementById('cupom-msg');
+        const cupom = listaCuponsGeral[cod];
+
+        if (cupom) {
+            cupomAtivo = { codigo: cod, ...cupom };
+            msg.innerText = "Cupom Aplicado!";
+            msg.style.color = "green";
+        } else {
+            cupomAtivo = null;
+            msg.innerText = "Cupom inválido ou inativo.";
+            msg.style.color = "red";
+        }
+        attTotal();
+    }
+
+    function attTotal() {
+        let subtotal = 0; 
+        carrinho.forEach(i => subtotal += (i.preco * i.qtd));
+        
+        // Lógica de Desconto
+        descontoCalculado = 0;
+        let taxaFinal = taxaOriginal;
+
+        if (cupomAtivo) {
+            if (cupomAtivo.tipo === "PORCENTAGEM") {
+                descontoCalculado = subtotal * cupomAtivo.valor;
+            } else {
+                descontoCalculado = cupomAtivo.valor;
+            }
+            if (cupomAtivo.frete_gratis === "SIM") {
+                taxaFinal = 0;
+            }
+        }
+
+        taxaEntrega = taxaFinal;
+        const totalGeral = (subtotal - descontoCalculado) + taxaEntrega;
+
+        // Atualização Visual
+        document.getElementById('barra-total').innerText = "R$ " + subtotal.toFixed(2).replace('.', ',');
+        document.getElementById('resumo-subtotal').innerText = "R$ " + subtotal.toFixed(2).replace('.', ',');
+        document.getElementById('checkout-total').innerText = "R$ " + totalGeral.toFixed(2).replace('.', ',');
+        document.getElementById('resumo-taxa').innerText = taxaEntrega === 0 && taxaOriginal > 0 ? "GRÁTIS" : `R$ ${taxaEntrega.toFixed(2)} (${distanciaKM} km)`;
+        
+        const linhaDesc = document.getElementById('linha-desconto');
+        if (descontoCalculado > 0) {
+            linhaDesc.style.display = 'flex';
+            document.getElementById('resumo-desconto').innerText = "- R$ " + descontoCalculado.toFixed(2).replace('.', ',');
+        } else {
+            linhaDesc.style.display = 'none';
+        }
+    }
+
+    function abrirCheckout() {
+        if(carrinho.length === 0) return alert("Seu carrinho está vazio!");
+        const lista = document.getElementById('carrinho-lista'); 
+        lista.innerHTML = "";
+        carrinho.forEach((item, index) => {
+            let nomeCategoria = item.categoria.replace(/_/g, ' ');
+            if(nomeCategoria === "Cardapio") nomeCategoria = "Pizza";
+            lista.innerHTML += `
+            <div class="carrinho-item">
+                <span>${item.qtd}x ${item.nome} <small style="color:#888">(${nomeCategoria})</small></span>
+                <span>R$ ${(item.preco * item.qtd).toFixed(2)} 
+                    <b onclick="removerItem(${index})" style="color:red; margin-left:10px; cursor:pointer">×</b>
+                </span>
+            </div>`;
+        });
+        document.getElementById('modal-checkout').style.display = 'block'; 
+        attTotal();
+    }
+
+    function fecharCheckout() { document.getElementById('modal-checkout').style.display = 'none'; }
+    
+    function removerItem(i) { 
+        carrinho.splice(i,1); 
+        if(carrinho.length===0) fecharCheckout(); else abrirCheckout(); 
+        const btnAtivo = document.querySelector('.btn-tab.active');
+        if(btnAtivo) render(btnAtivo.innerText.replace(/ /g, '_'));
+        attTotal(); 
+    }
+
+    function alternarMetodo() {
+        const m = document.getElementById('metodo-envio').value;
+        document.getElementById('campos-endereco').className = (m === 'retirada') ? 'oculto' : '';
+        if(m === 'retirada') { taxaOriginal = 0; taxaEntrega = 0; distanciaKM = "0.0"; attTotal(); } else { buscarCEP(); }
+    }
+
+   async function buscarCEP() {
+        const cep = document.getElementById('cliente-cep').value.replace(/\D/g, '');
+        if (cep.length !== 8) return;
+        
+        document.getElementById('resumo-taxa').innerText = "Calculando...";
+
+        try {
+            const resVia = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const dataVia = await resVia.json();
+            
+            if (dataVia.erro) {
+                alert("CEP não encontrado!");
+                return;
+            }
+            
+            document.getElementById('cliente-rua').value = `${dataVia.logradouro}, ${dataVia.bairro}`;
+            
+            const origem = "-22.93972285686089,-45.45448559468388";
+            const destino = `${dataVia.logradouro}, ${dataVia.bairro}, Pindamonhangaba, SP, Brasil`;
+            const googleUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origem}&destinations=${encodeURIComponent(destino)}&mode=driving&key=${googleApiKey}`;
+            
+            const resGoogle = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(googleUrl)}`);
+            const proxyData = await resGoogle.json();
+            const dataGoogle = JSON.parse(proxyData.contents);
+
+            if (dataGoogle.rows[0].elements[0].status === "OK") {
+                const metros = dataGoogle.rows[0].elements[0].distance.value;
+                distanciaKM = (metros / 1000).toFixed(1);
+                
+                // CÁLCULO DA TAXA
+                taxaOriginal = Math.max(TAXA_MINIMA, (distanciaKM * PRECO_POR_KM));
+                taxaEntrega = taxaOriginal; // Garante que a taxa atual receba o valor
+                
+                console.log("Distância:", distanciaKM, "Taxa:", taxaOriginal);
+            } else {
+                taxaOriginal = 7.00; // Valor padrão caso o Google falhe
+                taxaEntrega = 7.00;
+            }
+        } catch (e) { 
+            console.error("Erro no cálculo:", e);
+            taxaOriginal = 7.00; 
+            taxaEntrega = 7.00;
+        }
+        attTotal();
+    }
+
+    async function enviarPedido() {
+        try {
+            const nome = document.getElementById('cliente-nome').value;
+            const pgto = document.getElementById('cliente-pgto').value;
+            const mEnvio = document.getElementById('metodo-envio').value;
+            const valorNota = document.getElementById('cliente-obs').value || "";
+            
+            if(!nome || !pgto) return alert("Preencha Nome e Pagamento!");
+
+            let endereco = mEnvio === 'entrega' 
+                ? `${document.getElementById('cliente-rua').value} - ${document.getElementById('cliente-numero').value}` 
+                : "Retirada na Pizzaria";
+                
+            let subtotal = 0; 
+            carrinho.forEach(i => subtotal += (i.preco * i.qtd));
+            let total = (subtotal - descontoCalculado) + taxaEntrega;
+
+            // --- MONTAGEM DO TEXTO ESTILO IMPRESSÃO ---
+            const agora = new Date();
+            const dataFormatada = agora.toLocaleDateString('pt-BR') + " " + agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+            let m = `*Fornalle Pizzaria Delivery*%0A`;
+            m += `${dataFormatada}%0A`;
+            m += `---%0A`;
+            m += `*Cliente:* *${nome.toUpperCase()}*%0A%0A`;
+            
+            m += `*Itens*%0A`;
+            carrinho.forEach(i => {
+                // Se for meia-meia, quebra a linha para ficar igual à imagem
+                if(i.nome.includes('|')) {
+                    const partes = i.nome.split('|');
+                    m += `${i.qtd}x ${partes[0].trim()}(Pizza)%0A`;
+                    m += `${i.qtd}x ${partes[1].trim()}(Pizza)%0A`;
+                } else {
+                    m += `${i.qtd}x ${i.nome}%0A`;
+                }
+            });
+            
+            m += `---%0A`;
+            if(valorNota.trim() !== "") {
+                m += `*Obs:* ${valorNota}%0A`;
+                m += `---%0A`;
+            }
+            
+            m += `Taxa de entrega: R$ ${taxaEntrega.toFixed(2).replace('.', ',')}%0A`;
+            m += `---%0A`;
+            m += `*Total: R$ ${total.toFixed(2).replace('.', ',')}*%0A`;
+            m += `---%0A`;
+            m += `*Endereço:* ${endereco}%0A`;
+            m += `----------------------------%0A`;
+            m += `*Pagamento:* *${pgto}*%0A`;
+            
+            // Se houver cupom, adiciona uma linha extra no fim
+            if(cupomAtivo) m += `*Cupom:* ${cupomAtivo.codigo}%0A`;
+
+            // Envio para Planilha (mantém o original)
+            const itensTexto = carrinho.map(i => `${i.qtd}x ${i.nome}`).join(', ');
+            const pedidoPlanilha = { 
+                nome: nome, endereco: endereco, itens: itensTexto, 
+                subtotal: subtotal.toFixed(2), taxa: taxaEntrega.toFixed(2), 
+                total: total.toFixed(2), pagamento: pgto, nota: valorNota,
+                cupom: cupomAtivo ? cupomAtivo.codigo : ""
+            };
+            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(pedidoPlanilha) });
+
+            // Abrir WhatsApp
+            window.open(`https://wa.me/5512992611098?text=${m}`);
+
+        } catch (erro) { alert("Erro técnico: " + erro.message); }
+    }
+    load();
+</script>
+</body>
+</html>
